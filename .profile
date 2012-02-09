@@ -1,3 +1,7 @@
+volumes=/Volumes
+remoteRoot=/var/www
+vmRoot=~/VirtualBox\ VMs
+
 function startvm () {
   if [ -z "$1" ]; then
   	echo "missing guest"
@@ -6,10 +10,9 @@ function startvm () {
   echo "Starting $1..."
   _startvm "$1"&>/dev/null
   sleep 30
-  mkdir /Volumes/"$1"
-  sshfs "$1":/var/www /Volumes/"$1" -o cache=no,volname="$1" &>/dev/null
+  mrf "$1":"$remoteRoot" "$1"
   if [ -n "$2" ]; then
-  	mate /Volumes/"$1"/"$2"
+  	mate "$volumes"/"$1"/"$2"
   fi
 }
 
@@ -28,7 +31,7 @@ function _startvm () {
 } &>/dev/null
 
 function _stopvm () {
-  umount /Volumes/"$1"
+  umount "$volumes"/"$1"
   ssh "$1" 'sudo halt'
 } &>/dev/null
 
@@ -37,19 +40,16 @@ function mrf () {
   	echo "missing remote [host:/foo/bar]"
   	exit 1
   fi
-
   remote=$1
   host=${remote/\:*/}
   folder=${remote/*\:/}
-
   if [ -n "$2" ]
   	then mount_point=$2
   	else mount_point=$host${folder//\//\-}
   fi
-
-  mkdir /Volumes/$mount_point
-  #echo "Mounting ${host}:${folder} into /Volumes/${mount_point}"
-  sshfs $host:$folder /Volumes/$mount_point -o cache=no,follow_symlinks,volname=$mount_point &>/dev/null
+  mkdir "$volumes"/$mount_point
+  #echo "Mounting ${host}:${folder} into "$volumes"/${mount_point}"
+  sshfs $host:$folder "$volumes"/$mount_point -o cache=no,follow_symlinks,volname=$mount_point &>/dev/null
 }
 
 _list_vms () {
