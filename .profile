@@ -68,3 +68,4 @@ complete -F _list_vms stopvm
 alias ll="ls -l"
 alias la="ls -la"
 alias m="mate"
+alias eh="sudo mate /etc/hosts"
