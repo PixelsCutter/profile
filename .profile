@@ -69,3 +69,7 @@ alias ll="ls -l"
 alias la="ls -la"
 alias m="mate"
 alias eh="sudo mate /etc/hosts"
+
+# Timing requirements
+PROMPT_TITLE='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/~}\007"'
+export PROMPT_COMMAND="${PROMPT_COMMAND} ${PROMPT_TITLE}; "
